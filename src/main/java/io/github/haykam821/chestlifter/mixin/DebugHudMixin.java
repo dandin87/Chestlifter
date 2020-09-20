@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
+import net.minecraft.tag.TagManager;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,7 +17,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.hud.DebugHud;
 import net.minecraft.state.property.Property;
-import net.minecraft.tag.RegistryTagManager;
+import net.minecraft.tag.TagManagerLoader;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -54,8 +55,8 @@ public abstract class DebugHudMixin {
 			}
 
 			// Tags
-			RegistryTagManager tagManager = this.client.getNetworkHandler().getTagManager();
-			Iterator<Identifier> tagIterator = tagManager.blocks().getTagsFor(liftedState.getBlock()).iterator();
+			TagManager tagManager = this.client.getNetworkHandler().getTagManager();
+			Iterator<Identifier> tagIterator = tagManager.getBlocks().getTagsFor(liftedState.getBlock()).iterator();
 
 			while (tagIterator.hasNext()) {
 				Identifier tagId = tagIterator.next();

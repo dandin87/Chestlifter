@@ -5,9 +5,9 @@ import nerdhub.cardinal.components.api.ComponentType;
 import nerdhub.cardinal.components.api.util.sync.EntitySyncedComponent;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.ActionResult;
@@ -20,6 +20,7 @@ public class LiftedComponent implements EntitySyncedComponent {
 	private final PlayerEntity player;
 
 	private LiftedBlock liftedBlock;
+	private Object BlockState;
 
 	public LiftedComponent(PlayerEntity player) {
 		this.player = player;
@@ -67,14 +68,14 @@ public class LiftedComponent implements EntitySyncedComponent {
 		BlockState blockState = this.getLiftedBlock().getBlockState();
 		BlockPos placePos = hitResult.getBlockPos().offset(hitResult.getSide());
 
-		if (!world.canPlace(blockState, placePos, EntityContext.of(player))) return ActionResult.PASS;
+		if (!world.canPlace(blockState, placePos, ShapeContext.of(player))) return ActionResult.PASS;
 		if (!blockState.canPlaceAt(world, placePos)) return ActionResult.PASS;
 		
 		CompoundTag blockEntityTag = this.getLiftedBlock().getBlockEntityTagAtPosition(placePos);
 		
 		// Set world block
 		world.setBlockState(placePos, blockState);
-		world.getBlockEntity(placePos).fromTag(blockEntityTag);
+		world.getBlockEntity(placePos).fromTag((net.minecraft.block.BlockState) BlockState,blockEntityTag);
 
 		// Clear lifted block
 		this.clearLiftedBlock();

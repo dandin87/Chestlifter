@@ -1,16 +1,18 @@
 package io.github.haykam821.chestlifter.component;
 
-import com.mojang.datafixers.Dynamic;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.datafixer.NbtOps;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.util.math.BlockPos;
+import org.apache.commons.lang3.SerializationUtils;
 
 public class LiftedBlock {
+	private static SerializationUtils BlockState;
+	private static Object BlockEntity;
 	private final BlockState blockState;
 	private final BlockEntity blockEntity;
+	//private Object BlockState;
 
 	public LiftedBlock(BlockState blockState, BlockEntity blockEntity) {
 		this.blockState = blockState;
@@ -36,7 +38,8 @@ public class LiftedBlock {
 	}
 
 	public CompoundTag toTag(CompoundTag tag) {
-		tag.put("BlockState", BlockState.serialize(NbtOps.INSTANCE, this.blockState).getValue());
+		Tag blockState;
+		blockState = tag.put("BlockState", (Tag) BlockState);
 
 		CompoundTag blockEntityTag = new CompoundTag();
 		tag.put("BlockEntity", this.blockEntity.toTag(blockEntityTag));
@@ -49,13 +52,13 @@ public class LiftedBlock {
 			return null;
 
 		CompoundTag blockStateTag = tag.getCompound("BlockState");
-		BlockState blockState = BlockState.deserialize(new Dynamic<>(NbtOps.INSTANCE, blockStateTag));
+		Tag blockState = (Tag) BlockState;
 		if (blockState == null) return null;
 
 		CompoundTag blockEntityTag = tag.getCompound("BlockEntity");
-		BlockEntity blockEntity = BlockEntity.createFromTag(blockEntityTag);
+		BlockEntity blockEntity = (net.minecraft.block.entity.BlockEntity) BlockEntity;
 		if (blockEntity == null) return null;
 		
-		return new LiftedBlock(blockState, blockEntity);
+		return new LiftedBlock((net.minecraft.block.BlockState) blockState, blockEntity);
 	}
 }
